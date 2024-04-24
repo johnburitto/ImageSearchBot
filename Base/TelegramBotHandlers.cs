@@ -1,12 +1,23 @@
-﻿using Telegram.Bot;
+﻿using ImageSearchBot.HttpInfrastructure;
+using Newtonsoft.Json;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InlineQueryResults;
 
 namespace ImageSearchBot.Base
 {
     public class TelegramBotHandlers : ITelegramBotHandlers
     {
+        private IImageSearchService _service;
+        private string _key = "6c582cabb320497ebb8ddd97eb6643ff";
+
+        public TelegramBotHandlers()
+        {
+            _service = new ImageSearchService(_key);
+        }
+
         public async Task MessageHandlerAsync(ITelegramBotClient client, Update update, CancellationToken cancellationToken)
         {
             switch (update.Type)
@@ -38,12 +49,19 @@ namespace ImageSearchBot.Base
 
         public async Task InlineQueryHandlerAsync(ITelegramBotClient client, InlineQuery inlineQuery)
         {
-            return;
+            var imageResponse = await _service.Search(inlineQuery.Query, 30);
+            var images = imageResponse?.Value;
+            var results = new List<InlineQueryResult>();
+
+            images?.Select((_, index) => new { Image = _, Index = index }).ToList()
+                .ForEach(_ => results.Add(new InlineQueryResultPhoto($"{_.Index}", _.Image.ContentUrl!, _.Image.ThumbnailUrl!)));
+
+            await client.AnswerInlineQueryAsync(inlineQuery.Id, results);
         }
 
-        public async Task ChosenInlineResultHandlerAsync(ITelegramBotClient client, ChosenInlineResult chosenInlineResult)
+        public Task ChosenInlineResultHandlerAsync(ITelegramBotClient client, ChosenInlineResult chosenInlineResult)
         {
-            return;
+            return Task.CompletedTask;
         }
     }
 }
