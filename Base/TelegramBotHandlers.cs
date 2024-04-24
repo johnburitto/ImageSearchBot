@@ -1,5 +1,4 @@
 ﻿using ImageSearchBot.HttpInfrastructure;
-using Newtonsoft.Json;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;

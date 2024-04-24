@@ -1,5 +1,4 @@
-﻿
-using ImageSearchBot.Entities;
+﻿using ImageSearchBot.Entities;
 using Newtonsoft.Json;
 
 namespace ImageSearchBot.HttpInfrastructure
