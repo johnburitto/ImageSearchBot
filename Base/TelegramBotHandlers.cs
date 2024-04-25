@@ -1,4 +1,5 @@
 ﻿using ImageSearchBot.HttpInfrastructure;
+using Serilog;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
@@ -56,6 +57,7 @@ namespace ImageSearchBot.Base
                 .ForEach(_ => results.Add(new InlineQueryResultPhoto($"{_.Index}", _.Image.ContentUrl!, _.Image.ThumbnailUrl!)));
 
             await client.AnswerInlineQueryAsync(inlineQuery.Id, results);
+            Log.Information($"[{inlineQuery.From.FirstName} {inlineQuery.From.LastName} #{inlineQuery.From.Id}] searches for \"{inlineQuery.Query}\"");
         }
 
         public Task ChosenInlineResultHandlerAsync(ITelegramBotClient client, ChosenInlineResult chosenInlineResult)
