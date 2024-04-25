@@ -1,4 +1,6 @@
-﻿using Telegram.Bot;
+﻿using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
+using Telegram.Bot;
 using Telegram.Bot.Polling;
 
 namespace ImageSearchBot.Base
@@ -20,18 +22,27 @@ namespace ImageSearchBot.Base
                 AllowedUpdates = [],
                 ThrowPendingUpdates = true
             };
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
+
+            Log.Debug("Bot created");
         }
 
         public void StartReceiving()
         {
+            Log.Debug("Bot start receiving");
             Bot?.StartReceiving(
                 Handlers.MessageHandlerAsync,
                 Handlers.ErrorHandlerAsync,
                 ReceiverOptions,
                 CancellationTokenSource.Token);
 
-            Console.ReadKey();
-            CancellationTokenSource.Cancel();
+            while (true)
+            {
+
+            }
         }
     }
 }
