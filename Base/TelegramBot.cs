@@ -1,5 +1,7 @@
 ﻿using Serilog;
 using Serilog.Sinks.SystemConsole.Themes;
+using System.Net.Sockets;
+using System.Net;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 
@@ -26,6 +28,9 @@ namespace ImageSearchBot.Base
                 .MinimumLevel.Debug()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}", theme: AnsiConsoleTheme.Code)
                 .CreateLogger();
+            TcpListener server = new TcpListener(IPAddress.Any, 10000);
+            
+            server.Start();
 
             Log.Debug("Bot created");
         }
